@@ -23,8 +23,10 @@ let render = () => {
   );
 };
 
+/* eslint-disable no-undef*/
 // This code is excluded from production bundle
 if (__DEV__) {
+/* eslint-enable no-undef*/
   if (module.hot) {
     // Development render functions
     const renderApp = render;
