@@ -1,0 +1,43 @@
+.navbar {
+  height: 55px;
+  padding: 0;
+  background-color: #333E48;
+  ul {
+    margin: 0 auto;
+    @media screen and (max-width: 500px) {
+      margin: 0;
+    }
+    li {
+      list-style: none;
+      float: left;
+      margin: 0 2vw;
+    }
+  }
+}
+
+.navContainer {
+  position: fixed;
+  width: 100%;
+  z-index: 5;
+}
+
+.logo {
+  height: 55px;
+  position: relative;
+  top: 0px;
+  background-color: #FFFFFF;
+}
+
+.navlink {
+  top: 15px;
+  position: relative;
+  font-size: 20px;
+  color: #FFFFFF;
+  font-weight: 200;
+  text-decoration: none;
+  display: block;
+  &:hover {
+    color: #FF4612;
+    text-decoration: none;
+  }
+}
