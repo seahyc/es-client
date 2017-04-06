@@ -29,7 +29,7 @@ const APP_ENTRY = project.paths.client('main.js');
 webpackConfig.entry = {
   app: __DEV__ ?
     [APP_ENTRY].concat(`webpack-hot-middleware/client?path=${project.compiler_public_path}__webpack_hmr`) :
-    ['babel-polyfill', APP_ENTRY],
+    [APP_ENTRY],
   vendor: project.compiler_vendors
 };
 
@@ -92,6 +92,10 @@ if (__DEV__) {
 } else if (__PROD__) {
   debug('Enabling plugins for production (OccurenceOrder, Dedupe & UglifyJS).');
   webpackConfig.plugins.push(
+    new webpack.DefinePlugin({
+      'global': {}, // bizarre lodash(?) webpack workaround
+      'global.GENTLY': false // superagent client fix
+    }),
     new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.optimize.DedupePlugin(),
     new webpack.optimize.UglifyJsPlugin({
