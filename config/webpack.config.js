@@ -13,7 +13,7 @@ const __TEST__ = project.globals.__TEST__;
 debug('Creating configuration.');
 const webpackConfig = {
   name: 'client',
-  target: 'node',
+  target: 'node-webkit',
   devtool: project.compiler_devtool,
   resolve: {
     root: project.paths.client(),
