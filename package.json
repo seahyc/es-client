@@ -1,7 +1,7 @@
 {
-  "name": "react-redux-starter-kit",
+  "name": "es-client",
   "version": "1.0.7",
-  "description": "Get started with React, Redux, and React-Router!",
+  "description": "Entrepreneur profiling survey",
   "main": "index.js",
   "engines": {
     "node": ">=4.5.0",
@@ -71,9 +71,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/davezuko/react-redux-starter-kit.git"
+    "url": "git+https://gitlab.glints.com/yingcong/es-client.git"
   },
-  "author": "David Zukowski <david@zuko.me> (http://zuko.me)",
+  "author": "Seah Ying Cong <yingcong@glints.com> (https://seahyingcong.com)",
   "license": "MIT",
   "dependencies": {
     "babel-core": "^6.17.0",
@@ -118,8 +118,8 @@
     "sass-loader": "^4.0.0",
     "style-loader": "^0.13.1",
     "url-loader": "^0.5.6",
-    "webpack": "^1.12.14",
-    "yargs": "^6.3.0"
+    "webpack": "^2.3.3",
+    "yargs": "^7.0.2"
   },
   "devDependencies": {
     "babel-eslint": "^7.1.0",
@@ -139,6 +139,7 @@
     "eslint-plugin-react": "^6.0.0",
     "eslint-plugin-standard": "^2.0.0",
     "express": "^4.14.0",
+    "extract-text-webpack-plugin": "^2.1.0",
     "karma": "^1.0.0",
     "karma-coverage": "^1.0.0",
     "karma-mocha": "^1.0.1",

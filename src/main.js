@@ -23,8 +23,6 @@ let render = () => {
   );
 };
 
-const project = require('../config/project.config');
-const __DEV__ = __DEV__ || project.globals.__DEV__;
 // This code is excluded from production bundle
 if (__DEV__) {
   if (module.hot) {

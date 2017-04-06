@@ -15,11 +15,10 @@ export default (initialState = {}) => {
   // ======================================================
   // Store Enhancers
   // ======================================================
+
   const enhancers = [];
   enhancers.push(autoRehydrate());
   let composeEnhancers = compose();
-
-  const __DEV__ = __DEV__ || project.globals.__DEV__;
 
   if (__DEV__) {
     const composeWithDevToolsExtension = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__;

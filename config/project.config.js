@@ -1,7 +1,7 @@
 /* eslint key-spacing:0 spaced-comment:0 */
 const path = require('path');
 const debug = require('debug')('app:config:project');
-const argv = require('yargs').argv;
+// const argv = require('yargs').argv;
 const ip = require('ip');
 
 debug('Creating default configuration.');
@@ -82,7 +82,7 @@ config.globals = {
   '__DEV__'      : config.env === 'development',
   '__PROD__'     : config.env === 'production',
   '__TEST__'     : config.env === 'test',
-  '__COVERAGE__' : !argv.watch && config.env === 'test',
+  // '__COVERAGE__' : !argv.watch && config.env === 'test',
   '__BASENAME__' : JSON.stringify(process.env.BASENAME || '')
 };
 
