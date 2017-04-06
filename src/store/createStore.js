@@ -1,27 +1,30 @@
-import { applyMiddleware, compose, createStore } from 'redux'
-import thunk from 'redux-thunk'
-import { persistStore, autoRehydrate } from 'redux-persist'
-import { browserHistory } from 'react-router'
-import makeRootReducer from './reducers'
-import { updateLocation } from './location'
+import { applyMiddleware, compose, createStore } from 'redux';
+import thunk from 'redux-thunk';
+import { persistStore, autoRehydrate } from 'redux-persist';
+import { browserHistory } from 'react-router';
+import makeRootReducer from './reducers';
+import { updateLocation } from './location';
+const project = require('../../config/project.config');
 
 export default (initialState = {}) => {
   // ======================================================
   // Middleware Configuration
   // ======================================================
-  const middleware = [thunk]
+  const middleware = [thunk];
 
   // ======================================================
   // Store Enhancers
   // ======================================================
-  const enhancers = []
-  enhancers.push(autoRehydrate())
-  let composeEnhancers = compose
+  const enhancers = [];
+  enhancers.push(autoRehydrate());
+  let composeEnhancers = compose();
+
+  const __DEV__ = __DEV__ || project.globals.__DEV__;
 
   if (__DEV__) {
-    const composeWithDevToolsExtension = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
+    const composeWithDevToolsExtension = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__;
     if (typeof composeWithDevToolsExtension === 'function') {
-      composeEnhancers = composeWithDevToolsExtension
+      composeEnhancers = composeWithDevToolsExtension;
     }
   }
 
@@ -35,20 +38,20 @@ export default (initialState = {}) => {
       applyMiddleware(...middleware),
       ...enhancers
     )
-  )
+  );
 
-  persistStore(store)
-  store.asyncReducers = {}
+  persistStore(store);
+  store.asyncReducers = {};
 
   // To unsubscribe, invoke `store.unsubscribeHistory()` anytime
-  store.unsubscribeHistory = browserHistory.listen(updateLocation(store))
+  store.unsubscribeHistory = browserHistory.listen(updateLocation(store));
 
   if (module.hot) {
     module.hot.accept('./reducers', () => {
-      const reducers = require('./reducers').default
-      store.replaceReducer(reducers(store.asyncReducers))
-    })
+      const reducers = require('./reducers').default;
+      store.replaceReducer(reducers(store.asyncReducers));
+    });
   }
 
-  return store
-}
+  return store;
+};

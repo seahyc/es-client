@@ -1,14 +1,17 @@
-import React, {Component} from 'react'
-import {connect} from 'react-redux'
-import classnames from 'classnames'
-import keydown from 'react-keydown'
-import Scroll from 'react-scroll'
-import Question from './Question'
-import {fetchQuestions, selectActiveQuestion, saveAnswer, submitAnswers} from '../modules/survey'
-import Waypoint from 'react-waypoint'
-const Element = Scroll.Element
-const scroll = Scroll.scroller
-import {Line} from 'rc-progress'
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import classnames from 'classnames';
+import keydown from 'react-keydown';
+import Scroll from 'react-scroll';
+import Question from './Question';
+import Submit from './Submit';
+import { fetchQuestions, selectActiveQuestion, saveAnswer,
+submitAnswers, clearAnswers, clearErrors } from '../modules/survey';
+import Waypoint from 'react-waypoint';
+import _ from 'lodash';
+const Element = Scroll.Element;
+const scroll = Scroll.scroller;
+import './Survey.scss';
 
 class Survey extends Component {
   static propTypes = {
@@ -16,8 +19,15 @@ class Survey extends Component {
     activeQuestionId: React.PropTypes.number.isRequired,
     fetchQuestions: React.PropTypes.func.isRequired,
     selectActiveQuestion: React.PropTypes.func.isRequired,
-    saveAnswer: React.PropTypes.func.isRequired
-  }
+    saveAnswer: React.PropTypes.func.isRequired,
+    clearAnswers: React.PropTypes.func.isRequired,
+    clearErrors: React.PropTypes.func.isRequired,
+    activePersonalAttribute: React.PropTypes.string,
+    keydown: React.PropTypes.shape({
+      event: React.PropTypes.object
+    }),
+    submitAnswers: React.PropTypes.func.isRequired
+  };
 
   ensureActiveQuestionVisible(name, smooth = true) {
     try {
@@ -26,135 +36,111 @@ class Survey extends Component {
         smooth: smooth,
         offset: -(window.innerHeight / 2) + 250,
         ignoreCancelEvents: true
-      })
+      });
+      const scope = this;
+      setTimeout(() => {
+        scope.props.selectActiveQuestion(name);
+        const input = scope.refs[`qn-${name}`].getWrappedInstance().refs.input;
+        if (input) {
+          input.focus();
+        }
+      }, 500);
     } catch (e) {
-      console.log(e, 'Reached end or start of questionnaire')
+      console.warn(e, 'Reached end or start of questionnaire');
     }
-    const scope = this
-    setTimeout(function () {
-      scope.props.selectActiveQuestion(name)
-      const input = scope.refs[`qn-${name}`].getWrappedInstance().refs.input
-      if (input){
-        input.focus()
-      }
-    }, 500)
   }
 
   async handleKeyDown(event) {
-    if (['ArrowRight', 'ArrowDown', 'Enter'].includes(event.key)) {
-      await this.props.selectActiveQuestion(this.props.activeQuestionId + 1)
-    }
-    else if (['ArrowLeft', 'ArrowUp'].includes(event.key)) {
-      await this.props.selectActiveQuestion(this.props.activeQuestionId - 1)
+    if (['ArrowRight', 'ArrowDown', 'Enter', 'Tab'].includes(event.key)) {
+      await this.props.selectActiveQuestion(this.props.activeQuestionId + 1);
+    }	else if (['ArrowLeft', 'ArrowUp'].includes(event.key)) {
+      await this.props.selectActiveQuestion(this.props.activeQuestionId - 1);
     } else {
-      const activeQuestions = this.props.questions.filter(qn => qn.index === this.props.activeQuestionId)
-      if (activeQuestions.length) {
-        this.handleQuestionKeydown(event, activeQuestions[0])
+      const activeQuestion = _.find(this.props.questions, { order: this.props.activeQuestionId });
+      if (activeQuestion) {
+        this.handleQuestionKeydown(event, activeQuestion);
       }
     }
-    this.ensureActiveQuestionVisible(this.props.activeQuestionId)
+    this.ensureActiveQuestionVisible(this.props.activeQuestionId);
   }
 
   async handleQuestionKeydown(event, activeQuestion) {
     if (['scale', 'mcq'].includes(activeQuestion.type)) {
-      const keys = activeQuestion.options.map(opt => String(opt.id))
-      const index = keys.indexOf(event.key)
-      if (index > -1) {
-        await this.props.saveAnswer(activeQuestion.options[index].value)
-        setTimeout(this.ensureActiveQuestionVisible.bind(this, this.props.activeQuestionId + 1), 750)
+      const chosenOption = _.find(activeQuestion.options, { order: parseInt(event.key) });
+      if (chosenOption) {
+        await this.props.saveAnswer(chosenOption.value);
+        setTimeout(this.ensureActiveQuestionVisible.bind(this, this.props.activeQuestionId + 1), 750);
       }
     }
-  }2
+  }
 
   componentWillMount() {
     if (this.props.questions.length === 0) {
-      this.props.fetchQuestions()
+      this.props.fetchQuestions();
     }
   }
 
   componentDidMount() {
     if (this.props.questions.length) {
-      this.ensureActiveQuestionVisible(this.props.activeQuestionId, false)
+      this.ensureActiveQuestionVisible(this.props.activeQuestionId, false);
     }
   }
 
-  componentWillReceiveProps({keydown}) {
+  componentWillReceiveProps({ keydown }) {
     if (keydown.event && this.props.keydown.event !== keydown.event) {
-      this.handleKeyDown(keydown.event)
+      this.handleKeyDown(keydown.event);
     }
   }
 
   handleOnSubmit() {
-    this.props.submitAnswers(this.props.questions.map(qn => ({
-        questionId: qn.id,
-        answer: qn.answer
-      })
-    ))
+    this.props.submitAnswers();
   }
 
-  handleReset() {
-    this.props.fetchQuestions()
-    this.ensureActiveQuestionVisible(0, false)
+  async handleReset() {
+    this.props.clearAnswers();
+    this.props.clearErrors();
+    await this.props.fetchQuestions();
+    this.ensureActiveQuestionVisible(0, false);
   }
 
   render() {
-    const {questions, activeQuestionId} = this.props
-    const percent = Math.round((questions.filter(qn => qn.answer && !qn.error).length / questions.length) * 100)
+    const { questions, activeQuestionId } = this.props;
     return (
-      <div>
+      <div className="container text-center">
         <h1>Questions</h1>
-        <br /><br /><br /><br /><br /><br />
         {questions.length ?
-          questions.map((qn, index) => {
-            qn.index = index
-            return <Element name={String(index)} key={index}
-                            className={classnames({'inactive': index !== activeQuestionId})}>
-              <Waypoint onEnter={this.props.selectActiveQuestion.bind(this, index)} topOffset="25%" bottomOffset="40%">
-                <div onClick={this.ensureActiveQuestionVisible.bind(this, index)}>
-                  <Question {...qn} ref={`qn-${index}`} activeQuestionId = {activeQuestionId}
-                            active={index === activeQuestionId}
-                            setAndScroll={this.ensureActiveQuestionVisible.bind(this)}/>
-                </div>
-              </Waypoint>
-            </Element>
-          })
-          : null
-        }
-        <div className="submit-panel container">
-          <div className="row">
-            <div className="col-sm-1 col-md-1">
-            </div>
-            <div className="col-xs-5 col-sm-8 col-md-8">
-              <p className="progress-text"><strong>{percent}%</strong></p>
-              <Line percent={percent} strokeWidth="2" trailWidth="2"/>
-            </div>
-            <div className="col-xs-2 col-sm-1 col-md-1">
-              <div className="btn btn-glyph">
-                <span className="glyphicon glyphicon-repeat reset" onClick={this.handleReset.bind(this)}></span>
+          questions.map(qn => <Element name={String(qn.order)} key={qn.order}
+              className={classnames({ 'inactive': qn.order !== activeQuestionId })}>
+            <Waypoint onEnter={this.props.selectActiveQuestion.bind(this, qn.order)} topOffset="25%" bottomOffset="40%">
+              <div onClick={this.ensureActiveQuestionVisible.bind(this, qn.order)}>
+                <Question {...qn} ref={`qn-${qn.order}`} activeQuestionId={activeQuestionId}
+                    active={qn.order === activeQuestionId}
+                    setAndScroll={this.ensureActiveQuestionVisible.bind(this)} />
               </div>
-            </div>
-            <div className="col-xs-4 col-sm-2 col-md-2">
-              <button type="button" className="btn btn-default btn-lg" onClick={this.handleOnSubmit.bind(this)}
-                      disabled={percent !== 100}>Submit
-              </button>
-            </div>
-          </div>
-        </div>
+            </Waypoint>
+          </Element>) :
+          null
+        }
+        <Submit handleReset={this.handleReset.bind(this)} handleOnSubmit={this.handleOnSubmit.bind(this)}
+                ensureActiveQuestionVisible={this.ensureActiveQuestionVisible.bind(this)} />
       </div>
-    )
+    );
   }
 }
 
 Survey = connect(
-  (state) => ({
+  state => ({
     questions: state.survey.questions,
-    activeQuestionId: state.survey.activeQuestionId
+    activeQuestionId: state.survey.activeQuestionId,
+    personalAttribute: state.survey.activePersonalAttribute
   }),
   {
     fetchQuestions,
     selectActiveQuestion,
     submitAnswers,
-    saveAnswer
+    saveAnswer,
+    clearAnswers,
+    clearErrors
   },
   (stateProps, dispatchProps, ownProps) => ({
     ...ownProps,
@@ -163,10 +149,12 @@ Survey = connect(
     saveAnswer: (answer) => {
       dispatchProps.saveAnswer({
         questionId: stateProps.activeQuestionId,
+        personalAttribute: stateProps.personalAttribute,
         answer: answer
-      })
+      });
     }
   })
-)(Survey)
+)(Survey);
 
-export default keydown('up', 'down', 'right', 'left', 'enter', '1', '2', '3', '4', '5', 'a', 'b', 'c', 'd', 'e')(Survey)
+export default
+keydown('up', 'down', 'right', 'left', 'enter', '1', '2', '3', '4', '5', 'a', 'b', 'c', 'd', 'e')(Survey);

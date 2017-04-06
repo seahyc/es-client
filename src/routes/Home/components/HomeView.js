@@ -1,15 +1,23 @@
-import React from 'react'
-import DuckImage from '../assets/Duck.jpg'
-import './HomeView.scss'
+import React from 'react';
+import './HomeView.scss';
+import pointer from '../../../assets/images/pointer.svg';
+import ReactRotatingText from 'react-rotating-text';
 
 export const HomeView = () => (
-  <div>
-    <h4>Welcome!</h4>
-    <img
-      alt='This is a duck, because Redux!'
-      className='duck'
-      src={DuckImage} />
+  <div className="hero container">
+    <div className="row">
+      <div className="col-xs-12 col-md-10">
+        <div className="intro">
+          <h1>I am <ReactRotatingText items={['analytical', 'a people person',
+            'a leader', 'process-driven',
+            'a professional', 'an entrepreneur', 'consistent', 'outcome-oriented'
+          ]} /></h1>
+          <a href="/surveys/1">find out who you are now <img src={pointer} />
+          </a>
+        </div>
+      </div>
+    </div>
   </div>
-)
+);
 
-export default HomeView
+export default HomeView;
