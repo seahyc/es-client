@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 
-const apiHost = API_HOST;
+const apiHost = process.env.API_HOST;
 export const REQUEST_QUESTIONS = 'REQUEST_QUESTIONS';
 export const RECEIVE_QUESTIONS = 'RECEIVE_QUESTIONS';
 export const SUBMITTING_ANSWERS = 'SUBMITTING_ANSWERS';
