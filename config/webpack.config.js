@@ -29,7 +29,7 @@ const APP_ENTRY = project.paths.client('main.js');
 webpackConfig.entry = {
   app: __DEV__ ?
     [APP_ENTRY].concat(`webpack-hot-middleware/client?path=${project.compiler_public_path}__webpack_hmr`) :
-    [APP_ENTRY],
+    ['babel-polyfill', APP_ENTRY],
   vendor: project.compiler_vendors
 };
 
@@ -104,7 +104,7 @@ if (__DEV__) {
   );
 }
 
-// Don't split bundles during testing, since we only want import one bundle
+// Don't split bundles during testing, since we only want import one bundleq
 if (!__TEST__) {
   webpackConfig.plugins.push(
     new webpack.optimize.CommonsChunkPlugin({
