@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-const api_host = process.env.API_HOST || 'http://localhost:2001';
+const apiHost = process.env.API_HOST || 'http://localhost:2001';
 export const REQUEST_QUESTIONS = 'REQUEST_QUESTIONS';
 export const RECEIVE_QUESTIONS = 'RECEIVE_QUESTIONS';
 export const SUBMITTING_ANSWERS = 'SUBMITTING_ANSWERS';
@@ -61,7 +61,7 @@ export function submittedAnswers() {
 
 export const submitAnswers = () => (dispatch, getState) => new Promise(() => {
   dispatch(submittingAnswers());
-  fetch(`${api_host}/answers`, {
+  fetch(`${apiHost}/answers`, {
     method: 'POST',
     headers: {
       'Accept': 'application/json, text/plain, */*',
@@ -101,7 +101,7 @@ export function addOption(option) {
 export const fetchQuestions = () => dispatch => {
   dispatch(requestQuestions());
   return new Promise(() => {
-    fetch(`${api_host}/questions`)
+    fetch(`${apiHost}/questions`)
         .then(res => {
           res.json().then(response => dispatch(receiveQuestions(response)));
         });

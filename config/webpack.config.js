@@ -13,7 +13,7 @@ const __TEST__ = project.globals.__TEST__;
 debug('Creating configuration.');
 const webpackConfig = {
   name: 'client',
-  target: 'web',
+  target: 'node-webkit',
   devtool: project.compiler_devtool,
   resolve: {
     root: project.paths.client(),
@@ -125,10 +125,14 @@ webpackConfig.module.loaders = [{
   test: /\.(js|jsx)$/,
   exclude: /node_modules/,
   loaders: [
+    'required',
     'babel?cacheDirectory=true',
     'eslint-loader'
     ]
 }, {
+  test: /\.(js|jsx)$/,
+  loader: 'required'
+},{
   test: /\.json$/,
   loader: 'json'
 }];
