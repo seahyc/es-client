@@ -16,6 +16,18 @@ module.exports = {
   // Overrides when NODE_ENV === 'production'
   // ======================================================
   production: (config) => ({
+    globals: {
+      'process.env'  : {
+        'NODE_ENV' : JSON.stringify(config.env),
+        'API_HOST' : JSON.stringify('https://es-api.staging.glints.com')
+      },
+      'NODE_ENV'     : config.env,
+      '__DEV__'      : config.env === 'development',
+      '__PROD__'     : config.env === 'production',
+      '__TEST__'     : config.env === 'test',
+      // '__COVERAGE__' : !argv.watch && config.env === 'test',
+      '__BASENAME__' : JSON.stringify(process.env.BASENAME || '')
+    },
     compiler_public_path: '/',
     compiler_fail_on_warning: false,
     compiler_hash_type: 'chunkhash',
