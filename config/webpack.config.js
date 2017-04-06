@@ -64,6 +64,7 @@ webpackConfig.externals['react/addons'] = true;
 webpackConfig.plugins = [
   new webpack.IgnorePlugin(/^(buffertools)$/),
   new webpack.DefinePlugin(project.globals),
+  new webpack.EnvironmentPlugin(['API_HOST', 'NODE_ENV']),
   new HtmlWebpackPlugin({
     template: project.paths.client('index.html'),
     hash: false,
