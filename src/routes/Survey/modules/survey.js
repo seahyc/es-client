@@ -100,11 +100,11 @@ export function addOption(option) {
 
 export const fetchQuestions = () => dispatch => {
   dispatch(requestQuestions());
-  return new Promise(() => {
-    return fetch(`${apiHost}/questions`)
+  Promise(() => {
+    fetch(`${apiHost}/questions`)
       .then(res => {
-        return res.json().then(response => {
-          return dispatch(receiveQuestions(response));
+        res.json().then(response => {
+          dispatch(receiveQuestions(response));
         });
       });
   });

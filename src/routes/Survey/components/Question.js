@@ -86,13 +86,16 @@ class Question extends Component {
     answers: React.PropTypes.object,
     personalAttribute: React.PropTypes.string,
     saveAnswer: React.PropTypes.func.isRequired,
-    answer: React.PropTypes.string
+    answer: React.PropTypes.oneOfType([
+      React.PropTypes.string,
+      React.PropTypes.number
+    ])
   };
 
   componentDidUpdate(prevProps) {
-    if (this.input) {
+    if (this._input) {
       if (prevProps.active && !this.props.active) {
-        this.input.blur();
+        this._input.blur();
       }
     }
   }
@@ -127,7 +130,7 @@ class Question extends Component {
       this.props.setAndScroll(this.props.order + 1);
     }
   }
-
+  /* eslint-disable react/no-string-refs */
   render() {
     const {
       question, type, options, answer = '', saveAnswer, active, order, setAndScroll, error,
@@ -152,7 +155,7 @@ class Question extends Component {
       RenderedQuestion = (
         <div>
           <input className="borderless-input" onKeyDown={this.handleKeyDown.bind(this)}
-              value={answer} onChange={this.handleInput.bind(this, error)} ref={c => { this.input = c; }} />
+              value={answer} onChange={this.handleInput.bind(this, error)} ref="_input" />
           {error ? (
               answer ? <p className="message alert alert-danger">{errorMessage}</p> :
               <p className="message alert alert-danger">Please don't leave your answer blank</p>
@@ -163,16 +166,14 @@ class Question extends Component {
       break;
     case 'dropdown':
       RenderedQuestion = (
-        <SimpleSelect className="borderless-input" ref={c => { this.input = c; }}
-                      options={options} theme="material"
-            renderResetButton={() => (<div />)}
-            value={selectedOption} onValueChange={this.handleDropDownSelect.bind(this)} />
+        <SimpleSelect className="borderless-input" ref="_input" options={options} theme="material"
+            renderResetButton={() => (<div />)} value={selectedOption}
+            onValueChange={this.handleDropDownSelect.bind(this)} />
         );
       break;
     case 'dropdown-others':
       RenderedQuestion = (
-        <SimpleSelect className="borderless-input" ref={c => { this.input = c; }}
-                      options={options} theme="material"
+        <SimpleSelect className="borderless-input" ref="_input" options={options} theme="material"
             renderResetButton={() => (<div />)}
             createFromSearch={(options, search) => ({ label: search, value: search })}
             renderOption={arg => {
@@ -201,6 +202,7 @@ class Question extends Component {
       </div>
     );
   }
+  /* eslint-enable react/no-string-refs */
 }
 Question = connect(
   (state, props) => ({

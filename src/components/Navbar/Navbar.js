@@ -7,14 +7,14 @@ export const Navbar = () => (
     <div className="navbar">
       <ul>
         <li>
-          <Link to="/surveys/1" className="navlink">
-            Surveys
-          </Link>
-        </li>
-        <li>
           <IndexLink to="/" className="navlink">
             Home
           </IndexLink>
+        </li>
+        <li>
+          <Link to="/surveys/1" className="navlink">
+            Surveys
+          </Link>
         </li>
         <li>
           <Link to="/results" className="navlink">
