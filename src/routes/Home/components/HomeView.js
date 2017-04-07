@@ -2,6 +2,7 @@ import React from 'react';
 import './HomeView.scss';
 import pointer from '../../../assets/images/pointer.svg';
 import ReactRotatingText from 'react-rotating-text';
+import { Link } from 'react-router';
 
 export const HomeView = () => (
   <div className="hero container">
@@ -12,8 +13,8 @@ export const HomeView = () => (
             'a leader', 'process-driven',
             'a professional', 'an entrepreneur', 'consistent', 'outcome-oriented'
           ]} /></h1>
-          <a href="/surveys/1">find out who you are now <img src={pointer} />
-          </a>
+          <Link to="/surveys/1">find out who you are now <img src={pointer} />
+          </Link>
         </div>
       </div>
     </div>

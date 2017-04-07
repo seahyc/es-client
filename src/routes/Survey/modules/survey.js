@@ -1,6 +1,5 @@
 import _ from 'lodash';
 
-
 const apiHost = process.env.API_HOST;
 export const REQUEST_QUESTIONS = 'REQUEST_QUESTIONS';
 export const RECEIVE_QUESTIONS = 'RECEIVE_QUESTIONS';
@@ -102,10 +101,12 @@ export function addOption(option) {
 export const fetchQuestions = () => dispatch => {
   dispatch(requestQuestions());
   return new Promise(() => {
-    fetch(`${apiHost}/questions`)
-        .then(res => {
-          res.json().then(response => dispatch(receiveQuestions(response)));
+    return fetch(`${apiHost}/questions`)
+      .then(res => {
+        return res.json().then(response => {
+          return dispatch(receiveQuestions(response));
         });
+      });
   });
 };
 

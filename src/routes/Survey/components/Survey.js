@@ -41,6 +41,7 @@ class Survey extends Component {
       setTimeout(() => {
         scope.props.selectActiveQuestion(name);
         const input = scope.refs[`qn-${name}`].getWrappedInstance().refs.input;
+        debugger;
         if (input) {
           input.focus();
         }
