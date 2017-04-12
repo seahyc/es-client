@@ -9,5 +9,5 @@ trigger:
   tags:
     - docker:docker
   only:
-    - master
+    - staging
 

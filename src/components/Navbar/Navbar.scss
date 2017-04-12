@@ -29,15 +29,17 @@
 }
 
 .navlink {
-  top: 15px;
-  position: relative;
-  font-size: 20px;
-  color: #FFFFFF;
-  font-weight: 200;
-  text-decoration: none;
-  display: block;
-  &:hover {
-    color: #FF4612;
+  &:link, &:visited {
+    top: 15px;
+    position: relative;
+    font-size: 20px;
+    color: #FFFFFF;
+    font-weight: 200;
     text-decoration: none;
+    display: block;
+    &:hover {
+      color: #FF4612;
+      text-decoration: none;
+    }
   }
 }

@@ -1,6 +1,5 @@
 import React from 'react';
 import { IndexLink, Link } from 'react-router';
-import logo from '../../assets/images/sginnovate.svg';
 import './Navbar.scss';
 
 export const Navbar = () => (
@@ -8,14 +7,14 @@ export const Navbar = () => (
     <div className="navbar">
       <ul>
         <li>
+          <IndexLink to="/" className="navlink">
+            Home
+          </IndexLink>
+        </li>
+        <li>
           <Link to="/surveys/1" className="navlink">
             Surveys
           </Link>
-        </li>
-        <li>
-          <IndexLink to="/">
-            <img className="logo" src={logo} />
-          </IndexLink>
         </li>
         <li>
           <Link to="/results" className="navlink">

@@ -23,10 +23,10 @@ let render = () => {
   );
 };
 
-const project = require('../config/project.config');
-const __DEV__ = __DEV__ || project.globals.__DEV__;
+/* eslint-disable no-undef*/
 // This code is excluded from production bundle
 if (__DEV__) {
+/* eslint-enable no-undef*/
   if (module.hot) {
     // Development render functions
     const renderApp = render;

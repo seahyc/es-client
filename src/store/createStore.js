@@ -4,7 +4,10 @@ import { persistStore, autoRehydrate } from 'redux-persist';
 import { browserHistory } from 'react-router';
 import makeRootReducer from './reducers';
 import { updateLocation } from './location';
+
+/* eslint-disable no-unused-vars */
 const project = require('../../config/project.config');
+/* eslint-enable no-unused-vars */
 
 export default (initialState = {}) => {
   // ======================================================
@@ -15,13 +18,14 @@ export default (initialState = {}) => {
   // ======================================================
   // Store Enhancers
   // ======================================================
+
   const enhancers = [];
   enhancers.push(autoRehydrate());
   let composeEnhancers = compose();
 
-  const __DEV__ = __DEV__ || project.globals.__DEV__;
-
+  /* eslint-disable no-undef */
   if (__DEV__) {
+  /* eslint-enable no-undef */
     const composeWithDevToolsExtension = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__;
     if (typeof composeWithDevToolsExtension === 'function') {
       composeEnhancers = composeWithDevToolsExtension;

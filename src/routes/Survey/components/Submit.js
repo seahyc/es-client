@@ -30,11 +30,11 @@ class Submit extends Component {
     const { handleReset, percent } = this.props;
     return (<div className="submit-panel">
       <div className="row">
-        <div className="col-xs-12 col-md-7">
+        <div className="col-xs-12 col-md-8">
           <p className="progress-text">{percent}%</p>
           <Line strokeColor="#FF5221" percent={percent} strokeWidth="2" trailWidth="2" />
         </div>
-        <div className="col-xs-12 col-md-5">
+        <div className="col-xs-12 col-md-4">
           <div className="row button-panel">
             <div className="col-4">
               <a className="btn btn-default orange" href="#top">&#9650; Go To Top</a>

@@ -1,7 +1,7 @@
 /* eslint key-spacing:0 spaced-comment:0 */
 const path = require('path');
 const debug = require('debug')('app:config:project');
-const argv = require('yargs').argv;
+// const argv = require('yargs').argv;
 const ip = require('ip');
 
 debug('Creating default configuration.');
@@ -35,7 +35,7 @@ const config = {
     plugins        : ['transform-runtime'],
     presets        : ['es2015', 'react', 'stage-0']
   },
-  compiler_devtool         : 'source-map',
+  compiler_devtool         : '#source-map',
   compiler_hash_type       : 'hash',
   compiler_fail_on_warning : false,
   compiler_quiet           : false,
@@ -76,13 +76,15 @@ Edit at Your Own Risk
 // N.B.: globals added here must _also_ be added to .eslintrc
 config.globals = {
   'process.env'  : {
-    'NODE_ENV' : JSON.stringify(config.env)
+    'NODE_ENV' : JSON.stringify(config.env),
+    'API_HOST' : JSON.stringify('http://localhost:2001')
   },
   'NODE_ENV'     : config.env,
   '__DEV__'      : config.env === 'development',
   '__PROD__'     : config.env === 'production',
+  '__STAGE__'    : config.env === 'staging',
   '__TEST__'     : config.env === 'test',
-  '__COVERAGE__' : !argv.watch && config.env === 'test',
+  // '__COVERAGE__' : !argv.watch && config.env === 'test',
   '__BASENAME__' : JSON.stringify(process.env.BASENAME || '')
 };
 
