@@ -35,14 +35,14 @@ export function fetchQuestionsFailure(error) {
   return {
     type: FETCH_QUESTIONS_FAILURE,
     payload: error
-  }
+  };
 }
 
 export function submitAnswersFailure(error) {
   return {
     type: SUBMIT_ANSWERS_FAILURE,
     payload: error
-  }
+  };
 }
 
 export function saveError(error) {
@@ -94,7 +94,7 @@ export const submitAnswers = () => (dispatch, getState) => new Promise(() => {
   })
   .catch(err => {
     dispatch(submitAnswersFailure(err));
-  })
+  });
 });
 
 export function selectActiveQuestion(questionId) {
@@ -120,14 +120,12 @@ export function addOption(option) {
 
 export const fetchQuestions = () => dispatch => {
   dispatch(requestQuestions());
-  return new Promise(() => {
-    return fetch(`${apiHost}/questions`)
+  return new Promise(() => fetch(`${apiHost}/questions`)
       .then(res => res.json()
         .then(response => dispatch(receiveQuestions(response))))
       .catch(err => {
-        dispatch(fetchQuestionsFailure(err))
-      });
-  });
+        dispatch(fetchQuestionsFailure(err));
+      }));
 };
 
 export const actions = {

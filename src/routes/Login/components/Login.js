@@ -8,9 +8,10 @@ export const LoginView = () => (
     </div>
     <form className="form-login">
       <h4>Welcome!</h4>
-      <label htmlFor="inputEmail"></label>
-      <input type="email" id="inputEmail" className="form-control" placeholder="Email address" required={true} autoFocus={true}  />
-      <label htmlFor="inputPassword"></label>
+      <label htmlFor="inputEmail" />
+      <input type="email" id="inputEmail" className="form-control"
+             placeholder="Email address" required={true} autoFocus={true} />
+      <label htmlFor="inputPassword" />
       <input type="password" id="inputPassword" className="form-control" placeholder="Passcode" required={true} />
       <button className="btn btn-lg btn-block gradient" type="submit">Login</button>
     </form>
