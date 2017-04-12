@@ -9,6 +9,7 @@ const path = require('path');
 
 const __DEV__ = project.globals.__DEV__;
 const __PROD__ = project.globals.__PROD__;
+const __STAGE__ = project.globals.__STAGE__;
 const __TEST__ = project.globals.__TEST__;
 
 debug('Creating configuration.');
@@ -99,7 +100,7 @@ if (__DEV__) {
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin()
   );
-} else if (__PROD__) {
+} else if (__PROD__||__STAGE__) {
   debug('Enabling plugins for production (OccurenceOrder &UglifyJS).');
   webpackConfig.plugins.push(
     new webpack.optimize.UglifyJsPlugin({
