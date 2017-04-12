@@ -1,197 +1,100 @@
-import _ from 'lodash';
-
 const apiHost = process.env.API_HOST;
-export const REQUEST_QUESTIONS = 'REQUEST_QUESTIONS';
-export const RECEIVE_QUESTIONS = 'RECEIVE_QUESTIONS';
-export const SUBMITTING_ANSWERS = 'SUBMITTING_ANSWERS';
-export const SUBMITTED_ANSWERS = 'SUBMITTED_ANSWERS';
-export const SELECT_ACTIVE_QUESTION = 'SELECT_ACTIVE_QUESTION';
-export const SAVE_ANSWER = 'SAVE_ANSWER';
-export const CLEAR_ANSWERS = 'CLEAR_ANSWERS';
-export const CLEAR_ERRORS = 'CLEAR_ERRORS';
-export const SAVE_ERROR = 'SAVE_ERROR';
-export const ADD_OPTION = 'ADD_OPTION';
+export const UPDATE_EMAIL = 'UPDATE_EMAIL';
+export const UPDATE_PASSWORD = 'UPDATE_PASSWORD';
+export const REQUEST_TOKEN = 'REQUEST_TOKEN';
+export const LOGIN_FAILURE = 'LOGIN_FAILURE';
+export const RECEIVE_TOKEN = 'RECEIVE_TOKEN';
 
 // ------------------------------------
 // Actions
 // ------------------------------------
-export function requestQuestions() {
+export function updateEmail(email) {
   return {
-    type: REQUEST_QUESTIONS
+    type: UPDATE_EMAIL,
+    payload: email
   };
 }
 
-export function receiveQuestions(json) {
+export function updatePassword(password) {
   return {
-    type: RECEIVE_QUESTIONS,
-    payload: json
+    type: UPDATE_PASSWORD,
+    payload: password
   };
 }
 
-export function saveError(error) {
+export function requestToken() {
   return {
-    type: SAVE_ERROR,
+    type: REQUEST_TOKEN
+  };
+}
+
+export function loginFailure(error) {
+  return {
+    type: LOGIN_FAILURE,
     payload: error
   };
 }
 
-export function clearAnswers() {
+export function receiveToken(token) {
   return {
-    type: CLEAR_ANSWERS
+    type: RECEIVE_TOKEN,
+    payload: token
   };
 }
 
-export function clearErrors() {
-  return {
-    type: CLEAR_ERRORS
-  };
-}
-
-export function submittingAnswers() {
-  return {
-    type: SUBMITTING_ANSWERS
-  };
-}
-
-export function submittedAnswers() {
-  return {
-    type: SUBMITTED_ANSWERS
-  };
-}
-
-export const submitAnswers = () => (dispatch, getState) => new Promise(() => {
-  dispatch(submittingAnswers());
-  fetch(`${apiHost}/answers`, {
+export const login = () => (dispatch, getState) => new Promise(() => {
+  dispatch(requestToken());
+  fetch(`${apiHost}/login`, {
     method: 'POST',
     headers: {
       'Accept': 'application/json, text/plain, */*',
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      surveyId: 1,
-      responses: getState().survey.answers
+      email: getState().login.email,
+      password: getState().login.password
     })
+  }).then(token => {
+    dispatch(updatePassword(''));
+    dispatch(receiveToken(token));
   })
-        .then(() => {
-          dispatch(submittedAnswers());
-        });
+  .catch(err => {
+    dispatch(loginFailure(err));
+  });
 });
 
-export function selectActiveQuestion(questionId) {
-  return {
-    type: SELECT_ACTIVE_QUESTION,
-    payload: questionId
-  };
-}
-
-export function saveAnswer(answer) {
-  return {
-    type: SAVE_ANSWER,
-    payload: answer
-  };
-}
-
-export function addOption(option) {
-  return {
-    type: ADD_OPTION,
-    payload: option
-  };
-}
-
-export const fetchQuestions = () => dispatch => {
-  dispatch(requestQuestions());
-  Promise(() => {
-    fetch(`${apiHost}/questions`)
-      .then(res => {
-        res.json().then(response => {
-          dispatch(receiveQuestions(response));
-        });
-      });
-  });
-};
-
 export const actions = {
-  requestQuestions,
-  receiveQuestions,
-  saveError,
-  submittingAnswers,
-  submittedAnswers,
-  selectActiveQuestion,
-  fetchQuestions,
-  saveAnswer,
-  addOption,
-  clearErrors,
-  clearAnswers
+  updateEmail,
+  updatePassword,
+  requestToken,
+  loginFailure,
+  receiveToken,
+  login
 };
 // ------------------------------------
 // Action Handlers
 // ------------------------------------
 const ACTION_HANDLERS = {
-  [REQUEST_QUESTIONS]: state => ({
+  [UPDATE_EMAIL]: (state, action) => ({
     ...state,
-    fetching: true
+    email: action.payload
   }),
-  [RECEIVE_QUESTIONS]: (state, action) => ({
+  [UPDATE_PASSWORD]: (state, action) => ({
     ...state,
-    questions: action.payload,
-    fetching: false
+    password: action.payload
   }),
-  [SELECT_ACTIVE_QUESTION]: (state, action) => {
-    let payload = action.payload;
-    const numberOfQuestions = state.questions.length;
-    if (action.payload < 1) {
-      payload = 1;
-    } else if (action.payload > numberOfQuestions) {
-      payload = numberOfQuestions;
-    }
-    return {
-      ...state,
-      activeQuestionId: payload,
-      activePersonalAttribute: _.find(state.questions, { order: payload }).personalAttribute
-    };
-  },
-  [SUBMITTING_ANSWERS]: (state) => ({
+  [REQUEST_TOKEN]: state => ({
     ...state,
-    submitting: true
+    requesting: true
   }),
-  [SUBMITTING_ANSWERS]: (state) => ({
+  [LOGIN_FAILURE]: (state, action) => ({
     ...state,
-    submitting: false,
-    submitted: true
+    requesting: false,
+    error: action.payload
   }),
-  [SAVE_ANSWER]: (state, action) => ({
+  [RECEIVE_TOKEN]: (state, action) => ({
     ...state,
-    answers: {
-      ...state.answers,
-      [action.payload.questionId]: {
-        answer: action.payload.answer,
-        personalAttribute: action.payload.personalAttribute
-      }
-    }
-  }),
-  [CLEAR_ANSWERS]: state => ({
-    ...state,
-    answers: {}
-  }),
-  [SAVE_ERROR]: (state, action) => ({
-    ...state,
-    errors: {
-      ...state.errors,
-      [action.payload.questionId]: action.payload.error
-    }
-  }),
-  [CLEAR_ERRORS]: state => ({
-    ...state,
-    errors: {}
-  }),
-  [ADD_OPTION]: (state, action) => ({
-    ...state,
-    questions: state.questions.map(qn => {
-      if (qn.order === action.payload.questionId && Array.isArray(qn.options)) {
-        qn.options.push(action.payload.option);
-      }
-      return qn;
-    })
+    token: action.payload
   })
 };
 
@@ -199,15 +102,13 @@ const ACTION_HANDLERS = {
 // Reducer
 // ------------------------------------
 const initialState = {
-  title: null,
-  questions: [],
-  activeQuestionId: 0,
-  activePersonalAttribute: '',
-  answers: {},
-  errors: {}
+  email: '',
+  password: '',
+  error: '',
+  token: ''
 };
 
-export default function surveyReducer(state = initialState, action) {
+export default function loginReducer(state = initialState, action) {
   const handler = ACTION_HANDLERS[action.type];
 
   return handler ? handler(state, action) : state;

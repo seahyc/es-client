@@ -19,7 +19,7 @@ module.exports = {
     globals: {
       'process.env'  : {
         'NODE_ENV' : JSON.stringify(config.env),
-        'API_HOST' : JSON.stringify('https://es-api.staging.glints.com')
+        'API_HOST' : JSON.stringify('https://es-api.glints.com')
       },
       'NODE_ENV'     : config.env,
       '__DEV__'      : config.env === 'development',

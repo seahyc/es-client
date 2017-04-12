@@ -1,10 +1,13 @@
 import _ from 'lodash';
 
 const apiHost = process.env.API_HOST;
+
 export const REQUEST_QUESTIONS = 'REQUEST_QUESTIONS';
 export const RECEIVE_QUESTIONS = 'RECEIVE_QUESTIONS';
+export const FETCH_QUESTIONS_FAILURE = 'FETCH_QUESTIONS_FAILURE';
 export const SUBMITTING_ANSWERS = 'SUBMITTING_ANSWERS';
 export const SUBMITTED_ANSWERS = 'SUBMITTED_ANSWERS';
+export const SUBMIT_ANSWERS_FAILURE = 'SUBMIT_ANSWERS_FAILURE';
 export const SELECT_ACTIVE_QUESTION = 'SELECT_ACTIVE_QUESTION';
 export const SAVE_ANSWER = 'SAVE_ANSWER';
 export const CLEAR_ANSWERS = 'CLEAR_ANSWERS';
@@ -26,6 +29,20 @@ export function receiveQuestions(json) {
     type: RECEIVE_QUESTIONS,
     payload: json
   };
+}
+
+export function fetchQuestionsFailure(error) {
+  return {
+    type: FETCH_QUESTIONS_FAILURE,
+    payload: error
+  }
+}
+
+export function submitAnswersFailure(error) {
+  return {
+    type: SUBMIT_ANSWERS_FAILURE,
+    payload: error
+  }
 }
 
 export function saveError(error) {
@@ -72,9 +89,12 @@ export const submitAnswers = () => (dispatch, getState) => new Promise(() => {
       responses: getState().survey.answers
     })
   })
-        .then(() => {
-          dispatch(submittedAnswers());
-        });
+  .then(() => {
+    dispatch(submittedAnswers());
+  })
+  .catch(err => {
+    dispatch(submitAnswersFailure(err));
+  })
 });
 
 export function selectActiveQuestion(questionId) {
@@ -102,7 +122,11 @@ export const fetchQuestions = () => dispatch => {
   dispatch(requestQuestions());
   return new Promise(() => {
     return fetch(`${apiHost}/questions`)
-      .then(res => res.json().then(response => dispatch(receiveQuestions(response))));
+      .then(res => res.json()
+        .then(response => dispatch(receiveQuestions(response))))
+      .catch(err => {
+        dispatch(fetchQuestionsFailure(err))
+      });
   });
 };
 
@@ -132,6 +156,17 @@ const ACTION_HANDLERS = {
     questions: action.payload,
     fetching: false
   }),
+  [FETCH_QUESTIONS_FAILURE]: (state, action) => ({
+    ...state,
+    fetching: false,
+    fetchError: action.payload
+  }),
+  [SUBMIT_ANSWERS_FAILURE]: (state, action) => ({
+    ...state,
+    submitting: false,
+    submitted: false,
+    submitError: action.payload
+  }),
   [SELECT_ACTIVE_QUESTION]: (state, action) => {
     let payload = action.payload;
     const numberOfQuestions = state.questions.length;
@@ -146,11 +181,11 @@ const ACTION_HANDLERS = {
       activePersonalAttribute: _.find(state.questions, { order: payload }).personalAttribute
     };
   },
-  [SUBMITTING_ANSWERS]: (state) => ({
+  [SUBMITTING_ANSWERS]: state => ({
     ...state,
     submitting: true
   }),
-  [SUBMITTING_ANSWERS]: (state) => ({
+  [SUBMITTING_ANSWERS]: state => ({
     ...state,
     submitting: false,
     submitted: true
