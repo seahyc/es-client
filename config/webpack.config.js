@@ -27,7 +27,9 @@ const webpackConfig = {
     fs: 'empty',
     buffertools: 'empty',
     child_process: 'empty',
-    module: 'empty'
+    module: 'empty',
+    net: 'empty',
+    dns: 'empty'
   }
 };
 // ------------------------------------
@@ -133,8 +135,12 @@ if (!__TEST__) {
 webpackConfig.module.rules = [{
   test: /\.(js|jsx)$/,
   exclude: /(node_modules|bower_components)/,
-  loader: 'babel-loader',
-  query: project.compiler_babel
+  use: [
+    { loader: 'babel-loader',
+      query: project.compiler_babel
+    },
+    'eslint-loader'
+  ],
 }];
 
 // ------------------------------------

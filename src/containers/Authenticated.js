@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { push } from 'react-router';
+import { browserHistory } from 'react-router';
+import jwt from 'jwt-decode';
 
 export default function authenticate(WrappedComponent, optional = false) {
   class AuthenticatedComponent extends Component {
     static propTypes = {
       authenticated: React.PropTypes.bool.isRequired,
-      dispatch: React.PropTypes.func.isRequired,
       location: React.PropTypes.shape({
         pathname: React.PropTypes.string,
         search: React.PropTypes.string
@@ -23,7 +23,7 @@ export default function authenticate(WrappedComponent, optional = false) {
         const locationSearch = this.props.location.search;
         const query = locationSearch.replace('?', '&');
         const redirectAfterLogin = this.props.location.pathname + query;
-        this.props.dispatch(push(`/login?next=${redirectAfterLogin}`));
+        browserHistory.push(`/login?next=${redirectAfterLogin}`);
       }
     }
     render() {
@@ -36,6 +36,6 @@ export default function authenticate(WrappedComponent, optional = false) {
   }
 
   return connect(state => ({
-    authenticated: Boolean(state.session.token)
+    authenticated: Boolean(state.login && state.login.token && jwt(state.login.token))
   }))(AuthenticatedComponent);
 }

@@ -5,8 +5,9 @@ import keydown from 'react-keydown';
 import Scroll from 'react-scroll';
 import Question from './Question';
 import Submit from './Submit';
-import { fetchQuestions, selectActiveQuestion, saveAnswer,
-submitAnswers, clearAnswers, clearErrors } from '../modules/survey';
+import { browserHistory } from 'react-router';
+import { fetchQuestions, selectActiveQuestion, saveAnswer, submitAnswers, clearAnswers, clearErrors,
+resetProfileId } from '../modules/survey';
 import Waypoint from 'react-waypoint';
 import _ from 'lodash';
 const Element = Scroll.Element;
@@ -15,18 +16,30 @@ import './Survey.scss';
 
 class Survey extends Component {
   static propTypes = {
+    answers: React.PropTypes.object,
     questions: React.PropTypes.array,
-    activeQuestionId: React.PropTypes.number.isRequired,
+    profileId: React.PropTypes.string,
+    activeQuestionOrder: React.PropTypes.number.isRequired,
     fetchQuestions: React.PropTypes.func.isRequired,
     selectActiveQuestion: React.PropTypes.func.isRequired,
     saveAnswer: React.PropTypes.func.isRequired,
+    saveActiveAnswer: React.PropTypes.func.isRequired,
     clearAnswers: React.PropTypes.func.isRequired,
     clearErrors: React.PropTypes.func.isRequired,
     activePersonalAttribute: React.PropTypes.string,
     keydown: React.PropTypes.shape({
       event: React.PropTypes.object
     }),
-    submitAnswers: React.PropTypes.func.isRequired
+    submitAnswers: React.PropTypes.func.isRequired,
+    params: React.PropTypes.shape({
+      surveyId: React.PropTypes.string
+    }),
+    resetProfileId: React.PropTypes.func.isRequired,
+    location: React.PropTypes.shape({
+      query: React.PropTypes.shape({
+        tags: React.PropTypes.string
+      })
+    })
   };
 
   ensureActiveQuestionVisible(name, smooth = true) {
@@ -40,7 +53,7 @@ class Survey extends Component {
       const scope = this;
       setTimeout(() => {
         scope.props.selectActiveQuestion(name);
-        const input = scope.refs[`qn-${name}`].getWrappedInstance().refs._input;
+        const input = this[`qn-${name}`].getWrappedInstance()._input;
         if (input) {
           input.focus();
         }
@@ -52,37 +65,58 @@ class Survey extends Component {
 
   async handleKeyDown(event) {
     if (['ArrowRight', 'ArrowDown', 'Enter', 'Tab'].includes(event.key)) {
-      await this.props.selectActiveQuestion(this.props.activeQuestionId + 1);
+      await this.props.selectActiveQuestion(this.props.activeQuestionOrder + 1);
     }	else if (['ArrowLeft', 'ArrowUp'].includes(event.key)) {
-      await this.props.selectActiveQuestion(this.props.activeQuestionId - 1);
+      await this.props.selectActiveQuestion(this.props.activeQuestionOrder - 1);
     } else {
-      const activeQuestion = _.find(this.props.questions, { order: this.props.activeQuestionId });
+      const activeQuestion = _.find(this.props.questions, { order: this.props.activeQuestionOrder });
       if (activeQuestion) {
         this.handleQuestionKeydown(event, activeQuestion);
       }
     }
-    this.ensureActiveQuestionVisible(this.props.activeQuestionId);
+    this.ensureActiveQuestionVisible(this.props.activeQuestionOrder);
   }
 
   async handleQuestionKeydown(event, activeQuestion) {
     if (['scale', 'mcq'].includes(activeQuestion.type)) {
       const chosenOption = _.find(activeQuestion.options, { order: parseInt(event.key) });
       if (chosenOption) {
-        await this.props.saveAnswer(chosenOption.value);
-        setTimeout(this.ensureActiveQuestionVisible.bind(this, this.props.activeQuestionId + 1), 750);
+        await this.props.saveActiveAnswer(chosenOption.value);
+        setTimeout(this.ensureActiveQuestionVisible.bind(this, this.props.activeQuestionOrder + 1), 750);
       }
     }
   }
 
   componentWillMount() {
+    this.props.resetProfileId();
     if (this.props.questions.length === 0) {
-      this.props.fetchQuestions();
+      this.props.fetchQuestions({
+        surveyId: this.props.params.surveyId
+      });
     }
   }
 
   componentDidMount() {
     if (this.props.questions.length) {
-      this.ensureActiveQuestionVisible(this.props.activeQuestionId, false);
+      this.ensureActiveQuestionVisible(this.props.activeQuestionOrder, false);
+    }
+  }
+
+  componentDidUpdate() {
+    if (this.props.profileId) {
+      browserHistory.push(`/results/${this.props.profileId}`);
+    }
+    const tags = this.props.location.query.tags || 'default';
+    if (this.props.questions.length && tags) {
+      const tagQuestion = this.props.questions
+        .filter(qn => qn.personalAttribute && qn.personalAttribute === 'tags')[0];
+      if (!this.props.answers[tagQuestion.id] || (this.props.answers[tagQuestion.id].answer !== tags)) {
+        this.props.saveAnswer({
+          questionId: tagQuestion.id,
+          personalAttribute: tagQuestion.personalAttribute,
+          answer: tags
+        });
+      }
     }
   }
 
@@ -93,28 +127,31 @@ class Survey extends Component {
   }
 
   handleOnSubmit() {
-    this.props.submitAnswers();
+    this.props.submitAnswers(this.props.params.surveyId);
   }
 
   async handleReset() {
     this.props.clearAnswers();
     this.props.clearErrors();
-    await this.props.fetchQuestions();
+    await this.props.fetchQuestions({
+      surveyId: this.props.params.surveyId
+    });
     this.ensureActiveQuestionVisible(0, false);
   }
 
   render() {
-    const { questions, activeQuestionId } = this.props;
+    const { questions, activeQuestionOrder } = this.props;
     return (
       <div className="container text-center">
-        <h1>Questions</h1>
         {questions.length ?
           questions.map(qn => <Element name={String(qn.order)} key={qn.order}
-              className={classnames({ 'inactive': qn.order !== activeQuestionId })}>
+                className={classnames({ 'inactive': qn.order !== activeQuestionOrder })}>
+            {qn.survey === 1 && qn.order === 1 ? (<h1>Personal Particulars</h1>) : null}
+            {qn.survey === 1 && qn.order === 13 ? (<h1>Questionnaire</h1>) : null}
             <Waypoint onEnter={this.props.selectActiveQuestion.bind(this, qn.order)} topOffset="25%" bottomOffset="40%">
               <div onClick={this.ensureActiveQuestionVisible.bind(this, qn.order)}>
-                <Question {...qn} ref={`qn-${qn.order}`} activeQuestionId={activeQuestionId}
-                    active={qn.order === activeQuestionId}
+                <Question {...qn} ref={c => this[`qn-${qn.order}`] = c} activeQuestionOrder={activeQuestionOrder}
+                    active={qn.order === activeQuestionOrder}
                     setAndScroll={this.ensureActiveQuestionVisible.bind(this)} />
               </div>
             </Waypoint>
@@ -130,9 +167,12 @@ class Survey extends Component {
 
 Survey = connect(
   state => ({
+    answers: state.survey.answers,
     questions: state.survey.questions,
+    activeQuestionOrder: state.survey.activeQuestionOrder,
     activeQuestionId: state.survey.activeQuestionId,
-    personalAttribute: state.survey.activePersonalAttribute
+    personalAttribute: state.survey.activePersonalAttribute,
+    profileId: state.survey.profileId
   }),
   {
     fetchQuestions,
@@ -140,13 +180,14 @@ Survey = connect(
     submitAnswers,
     saveAnswer,
     clearAnswers,
-    clearErrors
+    clearErrors,
+    resetProfileId
   },
   (stateProps, dispatchProps, ownProps) => ({
     ...ownProps,
     ...stateProps,
     ...dispatchProps,
-    saveAnswer: (answer) => {
+    saveActiveAnswer: (answer) => {
       dispatchProps.saveAnswer({
         questionId: stateProps.activeQuestionId,
         personalAttribute: stateProps.personalAttribute,

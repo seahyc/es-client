@@ -4,19 +4,26 @@ import '../../styles/core.scss';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 
-export const CoreLayout = ({ children }) => (
+export const CoreLayout = ({ children, location }) => (
   <div>
-    <Navbar />
+    <Navbar location={location} />
     <div className="spacer">
       <a name="top" />
     </div>
-    {children}
+    <div className="full-height">
+      {children}
+    </div>
     <Footer />
   </div>
 );
 
 CoreLayout.propTypes = {
-  children: React.PropTypes.element.isRequired
+  children: React.PropTypes.element.isRequired,
+  location: React.PropTypes.shape({
+    query: React.PropTypes.shape({
+      tags: React.PropTypes.string
+    })
+  })
 };
 
 export default CoreLayout;

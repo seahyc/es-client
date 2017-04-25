@@ -1,9 +1,11 @@
 const apiHost = process.env.API_HOST;
+import jwt from 'jwt-decode';
 export const UPDATE_EMAIL = 'UPDATE_EMAIL';
 export const UPDATE_PASSWORD = 'UPDATE_PASSWORD';
 export const REQUEST_TOKEN = 'REQUEST_TOKEN';
-export const LOGIN_FAILURE = 'LOGIN_FAILURE';
+export const UPDATE_ERROR = 'UPDATE_ERROR';
 export const RECEIVE_TOKEN = 'RECEIVE_TOKEN';
+export const LOGOUT = 'LOGOUT';
 
 // ------------------------------------
 // Actions
@@ -28,9 +30,9 @@ export function requestToken() {
   };
 }
 
-export function loginFailure(error) {
+export function updateError(error) {
   return {
-    type: LOGIN_FAILURE,
+    type: UPDATE_ERROR,
     payload: error
   };
 }
@@ -47,29 +49,49 @@ export const login = () => (dispatch, getState) => new Promise(() => {
   fetch(`${apiHost}/login`, {
     method: 'POST',
     headers: {
-      'Accept': 'application/json, text/plain, */*',
+      'Accept': 'text/html',
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
       email: getState().login.email,
       password: getState().login.password
     })
-  }).then(token => {
+  })
+  .then(res => {
+    if (res.status !== 200) {
+      throw 'Invalid email or password';
+    }
+    return res.text();
+  })
+  .then(token => {
+    try {
+      jwt(token);
+    } catch (e) {
+      throw 'Invalid email or password';
+    }
     dispatch(updatePassword(''));
+    dispatch(updateError(''));
     dispatch(receiveToken(token));
   })
   .catch(err => {
-    dispatch(loginFailure(err));
+    dispatch(updateError(err));
   });
 });
+
+export function logout() {
+  return {
+    type: LOGOUT
+  };
+}
 
 export const actions = {
   updateEmail,
   updatePassword,
   requestToken,
-  loginFailure,
+  updateError,
   receiveToken,
-  login
+  login,
+  logout
 };
 // ------------------------------------
 // Action Handlers
@@ -77,17 +99,19 @@ export const actions = {
 const ACTION_HANDLERS = {
   [UPDATE_EMAIL]: (state, action) => ({
     ...state,
-    email: action.payload
+    email: action.payload,
+    error: ''
   }),
   [UPDATE_PASSWORD]: (state, action) => ({
     ...state,
-    password: action.payload
+    password: action.payload,
+    error: ''
   }),
   [REQUEST_TOKEN]: state => ({
     ...state,
     requesting: true
   }),
-  [LOGIN_FAILURE]: (state, action) => ({
+  [UPDATE_ERROR]: (state, action) => ({
     ...state,
     requesting: false,
     error: action.payload
@@ -95,6 +119,10 @@ const ACTION_HANDLERS = {
   [RECEIVE_TOKEN]: (state, action) => ({
     ...state,
     token: action.payload
+  }),
+  [LOGOUT]: state => ({
+    ...state,
+    token: ''
   })
 };
 
