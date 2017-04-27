@@ -56,7 +56,7 @@ function flattenProfiles(users) {
   const profiles = [];
   users.forEach(user => {
     user.profiles.forEach(profile => {
-      const pastedUser = {...user, ...profile};
+      const pastedUser = { ...user, ...profile };
       delete pastedUser.profiles;
       profiles.push(pastedUser);
     });
