@@ -13,7 +13,7 @@ module.exports = {
   }),
 
   // ======================================================
-  // Overrides when NODE_ENV === 'production'
+  // Overrides when NODE_ENV === 'staging'
   // ======================================================
   staging: (config) => ({
     globals: {

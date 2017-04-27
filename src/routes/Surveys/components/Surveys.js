@@ -41,7 +41,9 @@ class Surveys extends Component {
               </Markdown>
               <br />
               <Link to={`/surveys/${survey.id}${tags ? `?tags=${tags}` : ''}`}>
-                <button className="btn btn-lg orange">Start survey <img src={pointer} /></button>
+                <button className="btn btn-lg orange">
+                  <span>Start survey <img src={pointer} /></span>
+                </button>
               </Link>
             </div>
           </div>)) : <h1>No surveys available</h1>}

@@ -97,12 +97,13 @@
     "css-loader": "^0.26.0",
     "cssnano": "^3.7.4",
     "debug": "^2.2.0",
+    "exports-loader": "^0.6.4",
     "extract-text-webpack-plugin": "^2.1.0",
     "file-loader": "^0.9.0",
     "fixed-data-table": "^0.6.3",
     "fs-extra": "^1.0.0",
     "html-webpack-plugin": "^2.22.0",
-    "imports-loader": "^0.7.0",
+    "imports-loader": "^0.7.1",
     "ip": "^1.1.2",
     "json-loader": "^0.5.4",
     "jwt-decode": "^2.2.0",
@@ -137,6 +138,7 @@
     "style-loader": "^0.13.1",
     "url-loader": "^0.5.6",
     "webpack": "^2.3.3",
+    "whatwg-fetch": "^2.0.3",
     "yargs": "^7.0.2"
   },
   "devDependencies": {

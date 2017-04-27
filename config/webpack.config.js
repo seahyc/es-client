@@ -67,6 +67,9 @@ webpackConfig.externals['react/addons'] = true;
 webpackConfig.plugins = [
   new webpack.IgnorePlugin(/^(buffertools)$/),
   new webpack.DefinePlugin(project.globals),
+  new webpack.ProvidePlugin({
+    'fetch': 'imports-loader?this=>global!exports-loader?global.fetch!whatwg-fetch'
+  }),
   new HtmlWebpackPlugin({
     template: project.paths.client('index.html'),
     hash: false,
