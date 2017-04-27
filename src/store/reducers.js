@@ -3,7 +3,7 @@ import locationReducer from './location';
 
 export const makeRootReducer = (asyncReducers) => combineReducers({
   location: locationReducer,
-  // login: (state = {}) => state,
+  login: (state = {}) => state,
   ...asyncReducers
 });
 
