@@ -40,9 +40,9 @@ class Submit extends Component {
               <a className="btn btn-default orange" href="#top">&#9650; Go To Top</a>
             </div>
             <div className="col-4">
-              <a href="#" className="btn btn-default orange" onClick={handleReset.bind(this)}>
+              <span className="btn btn-default orange" onClick={handleReset.bind(this)}>
                   Reset
-                </a>
+              </span>
             </div>
             <div className="col-4">
               <button type="button" className={classnames('btn btn-default orange',

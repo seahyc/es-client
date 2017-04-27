@@ -5,10 +5,6 @@ import { browserHistory } from 'react-router';
 import makeRootReducer from './reducers';
 import { updateLocation } from './location';
 
-/* eslint-disable no-unused-vars */
-const project = require('../../config/project.config');
-/* eslint-enable no-unused-vars */
-
 export default (initialState = {}) => {
   // ======================================================
   // Middleware Configuration
@@ -44,11 +40,12 @@ export default (initialState = {}) => {
     )
   );
 
-  persistStore(store);
   store.asyncReducers = {};
 
   // To unsubscribe, invoke `store.unsubscribeHistory()` anytime
   store.unsubscribeHistory = browserHistory.listen(updateLocation(store));
+
+  persistStore(store);
 
   if (module.hot) {
     module.hot.accept('./reducers', () => {

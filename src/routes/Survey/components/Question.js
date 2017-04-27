@@ -33,7 +33,8 @@ VerticalOptions.propTypes = {
   options: React.PropTypes.array.isRequired,
   answer: React.PropTypes.oneOfType([
     React.PropTypes.string,
-    React.PropTypes.number
+    React.PropTypes.number,
+    React.PropTypes.bool
   ]),
   saveAnswer: React.PropTypes.func.isRequired,
   order: React.PropTypes.number.isRequired,
@@ -64,7 +65,8 @@ HorizontalOptions.propTypes = {
   options: React.PropTypes.array.isRequired,
   answer: React.PropTypes.oneOfType([
     React.PropTypes.string,
-    React.PropTypes.number
+    React.PropTypes.number,
+    React.PropTypes.bool
   ]),
   saveAnswer: React.PropTypes.func.isRequired,
   order: React.PropTypes.number.isRequired
@@ -81,14 +83,16 @@ class Question extends Component {
     regex: React.PropTypes.string,
     error: React.PropTypes.bool,
     errorMessage: React.PropTypes.string,
-    activeQuestionId: React.PropTypes.number,
+    activeQuestionOrder: React.PropTypes.number,
     order: React.PropTypes.number,
+    id: React.PropTypes.number,
     answers: React.PropTypes.object,
     personalAttribute: React.PropTypes.string,
     saveAnswer: React.PropTypes.func.isRequired,
     answer: React.PropTypes.oneOfType([
       React.PropTypes.string,
-      React.PropTypes.number
+      React.PropTypes.number,
+      React.PropTypes.bool
     ])
   };
 
@@ -130,7 +134,6 @@ class Question extends Component {
       this.props.setAndScroll(this.props.order + 1);
     }
   }
-  /* eslint-disable react/no-string-refs */
   render() {
     const {
       question, type, options, answer = '', saveAnswer, active, order, setAndScroll, error,
@@ -155,7 +158,7 @@ class Question extends Component {
       RenderedQuestion = (
         <div>
           <input className="borderless-input" onKeyDown={this.handleKeyDown.bind(this)}
-              value={answer} onChange={this.handleInput.bind(this, error)} ref="_input" />
+              value={answer} onChange={this.handleInput.bind(this, error)} ref={c => this._input = c} />
           {error ? (
               answer ? <p className="message alert alert-danger">{errorMessage}</p> :
               <p className="message alert alert-danger">Please don't leave your answer blank</p>
@@ -166,14 +169,14 @@ class Question extends Component {
       break;
     case 'dropdown':
       RenderedQuestion = (
-        <SimpleSelect className="borderless-input" ref="_input" options={options} theme="material"
+        <SimpleSelect className="borderless-input" ref={c => this._input = c} options={options} theme="material"
             renderResetButton={() => (<div />)} value={selectedOption}
             onValueChange={this.handleDropDownSelect.bind(this)} />
         );
       break;
     case 'dropdown-others':
       RenderedQuestion = (
-        <SimpleSelect className="borderless-input" ref="_input" options={options} theme="material"
+        <SimpleSelect className="borderless-input" ref={c => this._input = c} options={options} theme="material"
             renderResetButton={() => (<div />)}
             createFromSearch={(options, search) => ({ label: search, value: search })}
             renderOption={arg => {
@@ -202,18 +205,17 @@ class Question extends Component {
       </div>
     );
   }
-  /* eslint-enable react/no-string-refs */
 }
 Question = connect(
   (state, props) => ({
-    answer: state.survey.answers[props.order] ? state.survey.answers[props.order].answer : '',
-    error: state.survey.errors[props.order]
+    answer: state.survey.answers[props.id] ? state.survey.answers[props.id].answer : '',
+    error: state.survey.errors[props.id]
   }),
   (dispatch, props) => ({
     saveAnswer: answer => {
       if (props.active) {
         dispatch(saveAnswer({
-          questionId: props.order,
+          questionId: props.id,
           personalAttribute: props.personalAttribute,
           answer: answer
         }));
@@ -222,7 +224,7 @@ Question = connect(
     saveAnswerError: error => {
       if (props.active) {
         dispatch(saveError({
-          questionId: props.order,
+          questionId: props.id,
           error: error
         }));
       }
@@ -230,7 +232,7 @@ Question = connect(
     addOption: option => {
       if (props.active) {
         dispatch(addOption({
-          questionId: props.order,
+          questionId: props.id,
           option: option
         }));
       }

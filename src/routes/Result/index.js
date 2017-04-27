@@ -1,28 +1,28 @@
 import { injectReducer } from '../../store/reducers';
 
 export default (store) => ({
-  path: 'surveys/:surveyId',
+  path: 'results/:profileId',
 
   /*  Async getComponent is only invoked when route matches   */
   getComponent(nextState, cb) {
     /*  Webpack - use 'require.ensure' to create a split point
      and embed an async module loader (jsonp) when bundling   */
     require.ensure([
-      './components/Survey',
-      './modules/survey'
+      './components/Result',
+      './modules/result'
     ], (require) => {
       /*  Webpack - use require callback to define
        dependencies for bundling   */
-      const Survey = require('./components/Survey').default;
-      const reducer = require('./modules/survey').default;
+      const Result = require('./components/Result').default;
+      const reducer = require('./modules/result').default;
 
       /*  Add the reducer to the store on key 'survey'  */
-      injectReducer(store, { key: 'survey', reducer });
+      injectReducer(store, { key: 'result', reducer });
 
       /*  Return getComponent   */
-      cb(null, Survey);
+      cb(null, Result);
 
       /* Webpack named bundle   */
-    }, 'survey');
+    }, 'result');
   }
 });

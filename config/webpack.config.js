@@ -27,7 +27,9 @@ const webpackConfig = {
     fs: 'empty',
     buffertools: 'empty',
     child_process: 'empty',
-    module: 'empty'
+    module: 'empty',
+    net: 'empty',
+    dns: 'empty'
   }
 };
 // ------------------------------------
@@ -65,6 +67,9 @@ webpackConfig.externals['react/addons'] = true;
 webpackConfig.plugins = [
   new webpack.IgnorePlugin(/^(buffertools)$/),
   new webpack.DefinePlugin(project.globals),
+  new webpack.ProvidePlugin({
+    'fetch': 'imports-loader?this=>global!exports-loader?global.fetch!whatwg-fetch'
+  }),
   new HtmlWebpackPlugin({
     template: project.paths.client('index.html'),
     hash: false,
@@ -133,8 +138,12 @@ if (!__TEST__) {
 webpackConfig.module.rules = [{
   test: /\.(js|jsx)$/,
   exclude: /(node_modules|bower_components)/,
-  loader: 'babel-loader',
-  query: project.compiler_babel
+  use: [
+    { loader: 'babel-loader',
+      query: project.compiler_babel
+    },
+    'eslint-loader'
+  ],
 }];
 
 // ------------------------------------
@@ -206,8 +215,16 @@ webpackConfig.module.rules.push(
 if (!__DEV__) {
   debug('Applying ExtractTextPlugin to CSS loaders.');
   webpackConfig.module.rules.filter((rule) =>
-    rule.use && rule.use.find((name) => /css-loader/.test(name.split('?')[0]))
-  ).forEach((loader) => {
+    rule.use && rule.use.find(name =>  {
+      let loaderName;
+      if (typeof name === 'string') {
+        loaderName = name.split('?')[0];
+      } else if (typeof name === 'object') {
+        loaderName = name.loader;
+      }
+      return /css-loader/.test(loaderName);
+    })
+  ).forEach(loader => {
     const first = loader.use[0];
     const rest = loader.use.slice(1);
     loader.use = ExtractTextPlugin.extract({

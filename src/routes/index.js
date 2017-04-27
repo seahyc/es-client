@@ -3,6 +3,11 @@ import CoreLayout from '../layouts/CoreLayout';
 import Home from './Home';
 import SurveyRoute from './Survey';
 import LoginRoute from './Login';
+import SurveysRoute from './Surveys';
+import ResultRoute from './Result';
+import ResultsRoute from './Results';
+import LogoutRoute from './Logout';
+import ProfileRoute from './Profile';
 
 /*  Note: Instead of using JSX, we recommend using react-router
     PlainRoute objects to build route definitions.   */
@@ -13,7 +18,12 @@ export const createRoutes = (store) => ({
   indexRoute: Home,
   childRoutes: [
     SurveyRoute(store),
-    LoginRoute(store)
+    SurveysRoute(store),
+    LoginRoute(store),
+    ResultRoute(store),
+    ResultsRoute(store),
+    LogoutRoute(store),
+    ProfileRoute(store)
   ]
 });
 

@@ -14,6 +14,17 @@ export const CLEAR_ANSWERS = 'CLEAR_ANSWERS';
 export const CLEAR_ERRORS = 'CLEAR_ERRORS';
 export const SAVE_ERROR = 'SAVE_ERROR';
 export const ADD_OPTION = 'ADD_OPTION';
+export const RESET_PROFILE_ID = 'RESET_PROFILE_ID';
+
+function objectToParams(object) {
+  const queryParam = [];
+  for (const key in object) {
+    if (object.hasOwnProperty(key)) {
+      queryParam.push(`${key}=${object[key]}`);
+    }
+  }
+  return queryParam.join('&');
+}
 
 // ------------------------------------
 // Actions
@@ -70,13 +81,14 @@ export function submittingAnswers() {
   };
 }
 
-export function submittedAnswers() {
+export function submittedAnswers(profileId) {
   return {
-    type: SUBMITTED_ANSWERS
+    type: SUBMITTED_ANSWERS,
+    payload: profileId
   };
 }
 
-export const submitAnswers = () => (dispatch, getState) => new Promise(() => {
+export const submitAnswers = surveyId => (dispatch, getState) => new Promise(() => {
   dispatch(submittingAnswers());
   fetch(`${apiHost}/answers`, {
     method: 'POST',
@@ -85,12 +97,13 @@ export const submitAnswers = () => (dispatch, getState) => new Promise(() => {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      surveyId: 1,
+      surveyId: surveyId,
       responses: getState().survey.answers
     })
   })
-  .then(() => {
-    dispatch(submittedAnswers());
+  .then(res => res.json())
+  .then(result => {
+    dispatch(submittedAnswers(result.data.profileId));
   })
   .catch(err => {
     dispatch(submitAnswersFailure(err));
@@ -118,15 +131,22 @@ export function addOption(option) {
   };
 }
 
-export const fetchQuestions = () => dispatch => {
+export const fetchQuestions = params => dispatch => {
   dispatch(requestQuestions());
-  return new Promise(() => fetch(`${apiHost}/questions`)
+  const queryParams = `?${objectToParams(params)}`;
+  return new Promise(() => fetch(`${apiHost}/questions${queryParams}`)
       .then(res => res.json()
         .then(response => dispatch(receiveQuestions(response))))
       .catch(err => {
         dispatch(fetchQuestionsFailure(err));
       }));
 };
+
+export function resetProfileId() {
+  return {
+    type: RESET_PROFILE_ID
+  };
+}
 
 export const actions = {
   requestQuestions,
@@ -139,7 +159,8 @@ export const actions = {
   saveAnswer,
   addOption,
   clearErrors,
-  clearAnswers
+  clearAnswers,
+  resetProfileId
 };
 // ------------------------------------
 // Action Handlers
@@ -175,16 +196,18 @@ const ACTION_HANDLERS = {
     }
     return {
       ...state,
-      activeQuestionId: payload,
-      activePersonalAttribute: _.find(state.questions, { order: payload }).personalAttribute
+      activeQuestionOrder: payload,
+      activeQuestionId: (_.find(state.questions, { order: payload })).id,
+      activePersonalAttribute: (_.find(state.questions, { order: payload })).personalAttribute
     };
   },
   [SUBMITTING_ANSWERS]: state => ({
     ...state,
     submitting: true
   }),
-  [SUBMITTING_ANSWERS]: state => ({
+  [SUBMITTED_ANSWERS]: (state, action) => ({
     ...state,
+    profileId: action.payload,
     submitting: false,
     submitted: true
   }),
@@ -221,6 +244,10 @@ const ACTION_HANDLERS = {
       }
       return qn;
     })
+  }),
+  [RESET_PROFILE_ID]: state => ({
+    ...state,
+    profileId: ''
   })
 };
 
@@ -230,8 +257,9 @@ const ACTION_HANDLERS = {
 const initialState = {
   title: null,
   questions: [],
-  activeQuestionId: 0,
+  activeQuestionOrder: 0,
   activePersonalAttribute: '',
+  profileId: '',
   answers: {},
   errors: {}
 };
