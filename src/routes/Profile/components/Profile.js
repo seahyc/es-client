@@ -19,7 +19,7 @@ function Arrow(props) {
 
 Arrow.propTypes = {
   className: React.PropTypes.string,
-  onClick: React.PropTypes.func.isRequired
+  onClick: React.PropTypes.func
 };
 
 class Profile extends Component {
