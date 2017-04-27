@@ -12,7 +12,9 @@ from 'react-filter-box';
 import 'react-filter-box/lib/react-filter-box.css';
 import DayPicker from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
+import { Link } from 'react-router';
 import moment from 'moment';
+import { CSVLink } from 'react-csv';
 
 class CustomAutoComplete extends GridDataAutoCompleteHandler {
 
@@ -48,6 +50,18 @@ class CustomResultProcessing extends SimpleResultProcessing {
     }
     return false;
   }
+}
+
+function flattenProfiles(users) {
+  const profiles = [];
+  users.forEach(user => {
+    user.profiles.forEach(profile => {
+      const pastedUser = {...user, ...profile};
+      delete pastedUser.profiles;
+      profiles.push(pastedUser);
+    });
+  });
+  return profiles;
 }
 
 class Results extends Component {
@@ -146,10 +160,14 @@ class Results extends Component {
   render() {
     const { data, columnWidths, query, setQuery, users, containerWidth } = this.props;
     const rows = data;
+    const csv = flattenProfiles(data);
 
     return (
       <div className="custom-container">
         <h1>Results</h1>
+        <CSVLink className="btn btn-primary right" filename="survey_responses.csv" data={csv} target="_blank">
+          Download CSV
+        </CSVLink>
         <div className="box">
           <ReactFilterBox data={users} options={this.options} query={query} onParseOk={this.onParseOk.bind(this)}
                           customRenderCompletionItem={this.customRenderCompletionItem.bind(this)}
@@ -161,7 +179,7 @@ class Results extends Component {
                isColumnResizing={false} onColumnResizeEndCallback={this.resizeColumn.bind(this)}>
           <Column columnKey="id" header={<Cell>Responses</Cell>} cell={({ rowIndex }) => (
             <Cell>
-              <a href={`/profiles/${rows[rowIndex].id}`}>View Responses</a>
+              <Link to={`/profiles/${rows[rowIndex].id}`}>View Responses</Link>
             </Cell>
           ) } width={columnWidths.id || 100} isResizable={true} allowCellsRecycling={true} />
           <Column columnKey="email" header={<Cell>Email</Cell>} cell={({ rowIndex }) => (
