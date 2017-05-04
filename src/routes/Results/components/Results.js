@@ -12,7 +12,7 @@ from 'react-filter-box';
 import 'react-filter-box/lib/react-filter-box.css';
 import DayPicker from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
-import { Link } from 'react-router';
+import { Link, browserHistory } from 'react-router';
 import moment from 'moment';
 import { CSVLink } from 'react-csv';
 
@@ -74,11 +74,16 @@ class Results extends Component {
     query: React.PropTypes.string.isRequired,
     columnWidths: React.PropTypes.object.isRequired,
     users: React.PropTypes.array.isRequired,
-    containerWidth: React.PropTypes.number
+    containerWidth: React.PropTypes.number,
+    credentials: React.PropTypes.object
   };
 
   componentWillMount() {
-    this.props.fetchUsers();
+    if (this.props.credentials.role !== 'admin') {
+      browserHistory.push(`/profiles/${this.props.credentials.id}`);
+    } else {
+      this.props.fetchUsers();
+    }
   }
 
   resizeColumn(newColumnWidth, columnKey) {
