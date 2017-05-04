@@ -110,7 +110,7 @@ class Survey extends Component {
     if (this.props.questions.length && tags) {
       const tagQuestion = this.props.questions
         .filter(qn => qn.personalAttribute && qn.personalAttribute === 'tags')[0];
-      if (this.props.answers[tagQuestion.id] || (this.props.answers[tagQuestion.id].answer !== tags)) {
+      if (!this.props.answers[tagQuestion.id] || (this.props.answers[tagQuestion.id].answer !== tags)) {
         this.props.saveAnswer({
           questionId: tagQuestion.id,
           personalAttribute: tagQuestion.personalAttribute,
