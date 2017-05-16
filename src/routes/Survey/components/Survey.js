@@ -106,8 +106,8 @@ class Survey extends Component {
     if (this.props.profileId) {
       browserHistory.push(`/results/${this.props.profileId}`);
     }
-    const tags = this.props.location.query.tags;
-    if (this.props.questions.length && tags) {
+    const tags = this.props.location.query.tags || 'default';
+    if (this.props.questions.length) {
       const tagQuestion = this.props.questions
         .filter(qn => qn.personalAttribute && qn.personalAttribute === 'tags')[0];
       if (!this.props.answers[tagQuestion.id] || (this.props.answers[tagQuestion.id].answer !== tags)) {

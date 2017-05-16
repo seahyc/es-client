@@ -8,6 +8,7 @@ import ResultRoute from './Result';
 import ResultsRoute from './Results';
 import LogoutRoute from './Logout';
 import ProfileRoute from './Profile';
+import CardRoute from './Card';
 
 /*  Note: Instead of using JSX, we recommend using react-router
     PlainRoute objects to build route definitions.   */
@@ -23,7 +24,8 @@ export const createRoutes = (store) => ({
     ResultRoute(store),
     ResultsRoute(store),
     LogoutRoute(store),
-    ProfileRoute(store)
+    ProfileRoute(store),
+    CardRoute(store)
   ]
 });
 
