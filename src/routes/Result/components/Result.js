@@ -32,7 +32,8 @@ class Result extends Component {
         {particulars ? (
           <div className="container profile-panel">
             <h1>Result from {moment(profile[0].createdAt).format('lll')}</h1>
-            <Particulars particulars={particulars} attributes={attributes} />
+            <Particulars particulars={particulars} attributes={attributes} profile={profile[0]}
+                         activeProfileId={profile[0].profileId} />
             <Profile profile={profile} />
           </div>) : <h1>Profile doesn't exist.</h1>}
       </div>

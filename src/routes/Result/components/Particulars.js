@@ -1,5 +1,6 @@
 import React from 'react';
 import md5 from 'md5';
+import { Link } from 'react-router';
 
 function attributeFilter(attribute) {
   return attribute
@@ -23,6 +24,10 @@ const Particulars = props => (
               <strong>{attributeFilter(attribute)}:</strong> {props.particulars[attribute]}
             </div>)
           )}
+          <br />
+          <Link className="btn btn-success" target="_blank" to={`/card/${props.activeProfileId}`}>
+            Print Nametag (Save new page in pdf)
+          </Link>
         </div>
         <div className="col-md-6 particular-col">
           {props.attributes.slice(props.attributes.length / 2 - 2).map(attribute =>
@@ -39,9 +44,11 @@ const Particulars = props => (
 
 Particulars.propTypes = {
   particulars: React.PropTypes.object.isRequired,
+  profile: React.PropTypes.array,
   attributes: React.PropTypes.arrayOf(
     React.PropTypes.string
-  )
+  ),
+  activeProfileId: React.PropTypes.string
 };
 
 export default Particulars;

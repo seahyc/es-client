@@ -1,28 +1,28 @@
 import { injectReducer } from '../../store/reducers';
 
 export default (store) => ({
-  path: 'results',
+  path: 'card/:profileId',
 
   /*  Async getComponent is only invoked when route matches   */
   getComponent(nextState, cb) {
     /*  Webpack - use 'require.ensure' to create a split point
      and embed an async module loader (jsonp) when bundling   */
     require.ensure([
-      './components/Results',
-      './modules/results'
+      './components/Card',
+      './modules/card'
     ], (require) => {
       /*  Webpack - use require callback to define
        dependencies for bundling   */
-      const Results = require('./components/Results').default;
-      const reducer = require('./modules/results').default;
+      const Card = require('./components/Card').default;
+      const reducer = require('./modules/card').default;
 
-      /*  Add the reducer to the store on key 'results'  */
-      injectReducer(store, { key: 'results', reducer });
+      /*  Add the reducer to the store on key 'card'  */
+      injectReducer(store, { key: 'card', reducer });
 
       /*  Return getComponent   */
-      cb(null, Results);
+      cb(null, Card);
 
       /* Webpack named bundle   */
-    }, 'results');
+    }, 'card');
   }
 });

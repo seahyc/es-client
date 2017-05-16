@@ -2,6 +2,15 @@ import React from 'react';
 import { Chart } from 'react-google-charts';
 
 const colors = ['#FF6412', '#FD8933', '#E8AC43', '#FFD940', '#E8E33E', '#B8FF52', '#8AEA7C'];
+const egColors = ['#DC3912', '#3366CC', '#FF9900', '#109618'];
+const egColorsFaded = ['#F98174', '#B2D5E7', '#EEEB97', '#AAE28D'];
+const fadedOrNot = function fadedOrNot(categories) {
+  const total = categories.reduce((runningTotal, cat) => runningTotal + cat.average, 0);
+  const percentage = categories.map(cat => (cat.average / total) * 100);
+  const faded = percentage.map(percentage => Boolean(percentage < 22.5));
+  const colors = faded.map((faded, index) => faded ? egColorsFaded[index] : egColors[index]);
+  return colors.map(color => ({ color: color }));
+};
 
 const Profile = props => (
   <div>
@@ -13,10 +22,11 @@ const Profile = props => (
         <div className="panel-body">
           {test.test === 'EG' ? (
             <div>
-              <Chart chartType="PieChart" graph_id={test.test} options={{ title: 'Profile Breakdown' }}
-                     width="100%" height="60vh"
-                     data={[['Category', 'Average']].concat(test.categories.map(cat => [cat.name,
-                       cat.average]))} legend_toggle={true} />
+              <Chart chartType="PieChart" graph_id={test.test} options={{ title: 'Profile Breakdown',
+                slices: fadedOrNot(test.categories) }}
+                 width="100%" height="60vh"
+                 data={[['Category', 'Average']].concat(test.categories.map(cat =>
+                   [cat.name, cat.average]))} legend_toggle={true} />
             </div>
             ) : null}
           {test.test === 'CAS' ? (

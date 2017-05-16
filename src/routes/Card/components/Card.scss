@@ -1,5 +1,6 @@
-.profile-panel {
+.card-panel {
   font-size: 1.1em;
+  width: 700px;
   h1 {
     text-align: center;
   }
@@ -25,34 +26,17 @@
     color: #ac3716;
   }
 
-  .panel {
-    box-shadow: 1px 2px 18px 1px rgba(0,0,0,0.5);
+  .td {
+    width: 350px;
   }
 
-  .particulars {
-    padding: 2em;
-    .btn {
-      width: 300px;
-    }
+  .panel {
+    box-shadow: 1px 2px 18px 1px rgba(0,0,0,0.5);
   }
 }
 
 .particular-col {
   .row {
     padding-top: 0.5em;
-  }
-}
-
-.table-hover {
-  tbody {
-    tr:hover {
-      box-shadow: 1px 2px 18px 1px rgba(0,0,0,0.5)
-    }
-  }
-}
-
-.center {
-  table {
-    margin: auto !important;
   }
 }

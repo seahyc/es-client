@@ -84,7 +84,7 @@ class Profile extends Component {
         {particulars && user.profiles && user.profiles.length ? (
           <div className="container profile-panel">
             <h1>Profile of {particulars.firstName} {particulars.lastName}</h1>
-            <Particulars particulars={particulars} attributes={attributes} />
+            <Particulars particulars={particulars} attributes={attributes} activeProfileId={activeProfileId} />
             <div className="slider">
               <Slider {...settings}>
                 {user.profiles.map((pro, index) => (
