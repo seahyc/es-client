@@ -1,6 +1,6 @@
 {
   "name": "es-client",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "description": "Entrepreneur profiling survey",
   "main": "index.js",
   "engines": {
