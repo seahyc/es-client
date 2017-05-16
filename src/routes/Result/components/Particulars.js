@@ -25,9 +25,9 @@ const Particulars = props => (
             </div>)
           )}
           <br />
-          <Link className="btn btn-success" target="_blank" to={`/card/${props.activeProfileId}`}>
-            Print Nametag (Save new page in pdf)
-          </Link>
+          { props.activeProfileId ? (<Link className="btn btn-success" target="_blank" to={`/card/${props.activeProfileId}`}>
+              Print Nametag (Save new page in pdf)
+            </Link>): null }
         </div>
         <div className="col-md-6 particular-col">
           {props.attributes.slice(props.attributes.length / 2 - 2).map(attribute =>
