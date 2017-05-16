@@ -45,7 +45,9 @@ export default (initialState = {}) => {
   // To unsubscribe, invoke `store.unsubscribeHistory()` anytime
   store.unsubscribeHistory = browserHistory.listen(updateLocation(store));
 
-  persistStore(store);
+  persistStore(store, {
+    blacklist: ['profile']
+  });
 
   if (module.hot) {
     module.hot.accept('./reducers', () => {

@@ -97,7 +97,7 @@ class Profile extends Component {
               </Slider>
             </div>
             {profile ? (<div><h1>Result from {moment(profile[0].createdAt).format('lll')}</h1>
-              <Response profile={profile} /></div>) : <h1>Loading profile...</h1>}
+              <Response profile={profile} /></div>) : <h1>Click on a profile...</h1>}
           </div>) : <h1>User doesn't exist.</h1>}
       </div>
     );
