@@ -1,0 +1,42 @@
+.card-panel {
+  font-size: 1.1em;
+  width: 700px;
+  h1 {
+    text-align: center;
+  }
+  h2 {
+    font-size: 2em;
+  }
+  a {
+    display: block;
+    text-align: center;
+  }
+  button {
+    margin: 0 auto;
+    width: 50%;
+  }
+  .orange {
+    background-color: rgba(255, 177, 0, 0.45);
+    border-color: rgba(255, 170, 23, 0.62);
+    color: #ac3716;
+  }
+  button.orange:hover {
+    border-color: rgba(255, 177, 0, 0.45);
+    background-color: rgba(255, 170, 23, 0.62);
+    color: #ac3716;
+  }
+
+  .td {
+    width: 350px;
+  }
+
+  .panel {
+    box-shadow: 1px 2px 18px 1px rgba(0,0,0,0.5);
+  }
+}
+
+.particular-col {
+  .row {
+    padding-top: 0.5em;
+  }
+}
