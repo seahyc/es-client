@@ -45,7 +45,7 @@ const Particulars = props => (
 
 Particulars.propTypes = {
   particulars: React.PropTypes.object.isRequired,
-  profile: React.PropTypes.array,
+  profile: React.PropTypes.object,
   attributes: React.PropTypes.arrayOf(
     React.PropTypes.string
   ),

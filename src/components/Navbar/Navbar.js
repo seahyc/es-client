@@ -16,7 +16,7 @@ let Navbar = props => (
         <li>
           <Link to={`/surveys${props.location.query.tags ? `?tags=${props.location.query.tags}` : ''}`}
                 className="navlink">
-            Surveys
+            Profile Check
           </Link>
         </li>
         <li>

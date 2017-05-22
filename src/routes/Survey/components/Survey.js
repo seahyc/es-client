@@ -147,7 +147,7 @@ class Survey extends Component {
           questions.map(qn => <Element name={String(qn.order)} key={qn.order}
                 className={classnames({ 'inactive': qn.order !== activeQuestionOrder })}>
             {qn.survey === 1 && qn.order === 1 ? (<h1>Personal Particulars</h1>) : null}
-            {qn.survey === 1 && qn.order === 13 ? (<h1>Questionnaire</h1>) : null}
+            {qn.survey === 1 && qn.order === 14 ? (<h1>Questionnaire</h1>) : null}
             <Waypoint onEnter={this.props.selectActiveQuestion.bind(this, qn.order)} topOffset="25%" bottomOffset="40%">
               <div onClick={this.ensureActiveQuestionVisible.bind(this, qn.order)}>
                 <Question {...qn} ref={c => this[`qn-${qn.order}`] = c} activeQuestionOrder={activeQuestionOrder}

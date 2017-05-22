@@ -32,9 +32,9 @@ const Profile = props => (
           {test.test === 'CAS' ? (
             <div>
               <Chart chartType="ColumnChart" graph_id={test.test} options={{ title: 'Attributes Percentile' }}
-                     width="100%" height="60vh"
-                     data={[['Category', 'Percentile', { role: 'style' }]].concat(test.categories.map(cat =>
-                       [cat.name, cat.percentile, colors[cat.order - 1]]))} legend_toggle={true} />
+                     width="100%" height="80vh"
+                     data={[['Category', 'Percentile', { role: 'style' }]].concat(test.categories.map((cat, index) =>
+                       [cat.name, cat.percentile, egColors[Math.floor(index / 3)]]))} legend_toggle={true} />
               <table className="table table-hover">
                 <thead>
                   <tr>
@@ -43,8 +43,8 @@ const Profile = props => (
                   </tr>
                 </thead>
                 <tbody>
-                  {test.categories.map(cat => (
-                    <tr key={cat.category} style={{ backgroundColor: colors[cat.order - 1] }}>
+                  {test.categories.map((cat, index) => (
+                    <tr key={cat.category} style={{ backgroundColor: egColorsFaded[Math.floor(index / 3)] }}>
                       <td><strong>{cat.name}</strong></td>
                       <td>{cat.band}</td>
                     </tr>

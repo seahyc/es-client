@@ -1,7 +1,6 @@
 import React from 'react';
 import { Chart } from 'react-google-charts';
 
-const colors = ['#FF6412', '#FD8933', '#E8AC43', '#FFD940', '#E8E33E', '#B8FF52', '#8AEA7C'];
 const egColors = ['#DC3912', '#3366CC', '#FF9900', '#109618'];
 const egColorsFaded = ['#F98174', '#B2D5E7', '#EEEB97', '#AAE28D'];
 const fadedOrNot = function fadedOrNot(categories) {
@@ -16,15 +15,15 @@ const Profile = props => (
   <div>
     <div className="panel">
       <div className="panel-heading orange">
-        <h2 className="panel-title">{props.name}</h2>
+        <h2 className="panel-title">{props.header}</h2>
       </div>
       <div className="panel-body">
         <div>
           <h4>{props.CAS.name}</h4>
           <Chart chartType="ColumnChart" graph_id={props.CAS.test} options={{ title: 'Attributes Percentile' }}
-                 width="100%" height="400px"
-                 data={[['Category', 'Percentile', { role: 'style' }]].concat(props.CAS.categories.map(cat =>
-                   [cat.name, cat.percentile, colors[cat.order - 1]]))} legend_toggle={false} />
+                 width="100%" height="480px"
+                 data={[['Category', 'Percentile', { role: 'style' }]].concat(props.CAS.categories.map((cat, index) =>
+                   [cat.name, cat.percentile, egColors[Math.floor(index / 3)]]))} legend_toggle={false} />
           <table>
             <tr>
               <td>
@@ -63,7 +62,7 @@ Profile.propTypes = {
   CAS: React.PropTypes.object,
   EG: React.PropTypes.object,
   GRIT: React.PropTypes.object,
-  name: React.PropTypes.string
+  header: React.PropTypes.string
 };
 
 export default Profile;

@@ -29,7 +29,7 @@ class Surveys extends Component {
 
     return (
       <div className="container survey-panel">
-        <h1>Surveys</h1>
+        <h1>Profile Checks</h1>
         {surveys ? surveys.map((survey, index) => (
           <div key={index} className="panel">
             <div className="panel-heading orange">
@@ -42,7 +42,7 @@ class Surveys extends Component {
               <br />
               <Link to={`/surveys/${survey.id}${tags ? `?tags=${tags}` : ''}`}>
                 <button className="btn btn-lg orange">
-                  <span>Start survey <img src={pointer} /></span>
+                  <span>Start profile check <img src={pointer} /></span>
                 </button>
               </Link>
             </div>

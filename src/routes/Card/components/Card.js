@@ -42,7 +42,9 @@ class Card extends Component {
       <div>
         {particulars ? (
           <div className="container card-panel">
-            <Profile CAS={CAS} EG={EG} GRIT={GRIT} name={`${particulars.firstName} ${particulars.lastName}`} />
+            <Profile CAS={CAS} EG={EG} GRIT={GRIT} header={particulars.organization ? `${particulars.firstName}
+            ${particulars.lastName} from ${particulars.organization}` : `${particulars.firstName}
+            ${particulars.lastName}`} />
           </div>) : <h1>Card doesn't exist.</h1>}
       </div>
     );
