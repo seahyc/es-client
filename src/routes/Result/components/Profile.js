@@ -3,13 +3,17 @@ import { Chart } from 'react-google-charts';
 
 const colors = ['#FF6412', '#FD8933', '#E8AC43', '#FFD940', '#E8E33E', '#B8FF52', '#8AEA7C'];
 const egColors = ['#DC3912', '#3366CC', '#FF9900', '#109618'];
-const egColorsFaded = ['#F9A6A3', '#C0DFE7', '#EEEB97', '#B8E2A3'];
+const egColorsFaded = ['#F9A6A3', '#C0DFE7', '#EEE287', '#B8E2A3'];
 const fadedOrNot = function fadedOrNot(categories) {
   const total = categories.reduce((runningTotal, cat) => runningTotal + cat.average, 0);
   const percentage = categories.map(cat => (cat.average / total) * 100);
   const faded = percentage.map(percentage => Boolean(percentage < 22.5));
   return faded.map((faded, index) => faded ?
-    { color: egColorsFaded[index], offset: 0.05 } : { color: egColors[index] });
+    { color: egColorsFaded[index] } : { color: egColors[index], textStyle: {
+      fontName: 'Arial Black',
+      fontSize: 25,
+      bold: true
+    } });
 };
 
 const Profile = props => (
