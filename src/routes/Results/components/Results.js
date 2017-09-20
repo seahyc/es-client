@@ -161,7 +161,7 @@ class Results extends Component {
     },
     {
       columField: 'organization',
-      type: 'selection'
+      type: 'text'
     }
   ];
 
