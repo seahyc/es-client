@@ -158,6 +158,10 @@ class Results extends Component {
     {
       columField: 'tags',
       type: 'selection'
+    },
+    {
+      columField: 'organization',
+      type: 'selection'
     }
   ];
 
@@ -247,6 +251,11 @@ class Results extends Component {
               {moment(rows[rowIndex].lastResponseDate).format('D MMM YYYY h:mmA')}
             </Cell>
             ) } width={columnWidths.lastResponseDate || 130} isResizable={true} allowCellsRecycling={true} />
+          <Column columnKey="organization" header={<Cell>Organization</Cell>} cell={({ rowIndex }) => (
+            <Cell>
+              {rows[rowIndex].organization}
+            </Cell>
+            ) } width={columnWidths.organization || 130} isResizable={true} allowCellsRecycling={true} />
         </Table>
       </div>
     );
