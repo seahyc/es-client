@@ -30,7 +30,7 @@ class Surveys extends Component {
     return (
       <div className="container survey-panel">
         <h1>Profile Checks</h1>
-        {surveys ? surveys.map((survey, index) => (
+        {surveys && surveys.length ? surveys.map((survey, index) => (
           <div key={index} className="panel">
             <div className="panel-heading orange">
               <h2 className="panel-title">{survey.title}</h2>
