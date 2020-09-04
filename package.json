@@ -107,7 +107,7 @@
     "ip": "^1.1.2",
     "json-loader": "^0.5.4",
     "jwt-decode": "^2.2.0",
-    "markdown-to-jsx": "^5.0.2",
+    "markdown-to-jsx": "^6.11.4",
     "md5": "^2.2.1",
     "moment": "^2.18.1",
     "node-sass": "^4.0.0",
